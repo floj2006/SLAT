@@ -1,0 +1,15 @@
+# Python
+__pycache__/
+*.pyc
+.pytest_cache/
+.venv/
+venv/
+backend/slot.db
+
+# Node
+node_modules/
+frontend/dist/
+
+# Служебное
+figma/scripts/dist/*.joined.js
+.DS_Store

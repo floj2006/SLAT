@@ -1,0 +1,52 @@
+.stack {
+  position: fixed;
+  right: var(--space-6);
+  bottom: var(--space-6);
+  z-index: 60;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.toast {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  min-width: 260px;
+  max-width: 380px;
+  padding: var(--space-3) var(--space-4);
+  border-radius: var(--radius-md);
+  background: var(--color-text);
+  color: var(--color-bg);
+  font: var(--text-small);
+  font-weight: 500;
+  box-shadow: var(--shadow-lg);
+  animation: slide 220ms cubic-bezier(0.2, 0, 0, 1);
+}
+
+.success svg {
+  color: var(--color-now);
+}
+
+.error svg {
+  color: var(--color-cancelled);
+}
+
+@media (max-width: 767px) {
+  .stack {
+    left: var(--space-4);
+    right: var(--space-4);
+    bottom: 84px;
+  }
+
+  .toast {
+    max-width: none;
+  }
+}
+
+@keyframes slide {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+}

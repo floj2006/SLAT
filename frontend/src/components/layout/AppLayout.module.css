@@ -1,0 +1,22 @@
+.app {
+  display: flex;
+  min-height: 100vh;
+}
+
+.column {
+  flex: 1;
+  min-width: 0;
+}
+
+.main {
+  width: 100%;
+  max-width: 1160px;
+  margin: 0 auto;
+  padding: var(--space-10) var(--space-10) var(--space-14);
+}
+
+@media (max-width: 767px) {
+  .main {
+    padding: var(--space-5) var(--space-4) 104px;
+  }
+}

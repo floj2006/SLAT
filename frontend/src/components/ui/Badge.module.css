@@ -1,0 +1,40 @@
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  height: 24px;
+  padding: 0 9px;
+  border-radius: var(--radius-full);
+  font: var(--text-caption);
+  white-space: nowrap;
+}
+
+.neutral {
+  background: var(--color-surface-2);
+  color: var(--color-text-2);
+}
+
+.accent {
+  background: var(--color-accent-soft);
+  color: var(--color-accent-text);
+}
+
+.now {
+  background: var(--color-now-soft);
+  color: var(--color-now);
+}
+
+.replacement {
+  background: var(--color-replacement-soft);
+  color: var(--color-replacement);
+}
+
+.room {
+  background: var(--color-room-soft);
+  color: var(--color-room);
+}
+
+.cancelled {
+  background: var(--color-cancelled-soft);
+  color: var(--color-cancelled);
+}

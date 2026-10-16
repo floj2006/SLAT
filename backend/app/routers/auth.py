@@ -1,0 +1,33 @@
+"""Вход и выход администратора: /api/auth"""
+
+from fastapi import APIRouter, Depends, HTTPException
+from sqlalchemy.orm import Session
+
+from ..auth import get_current_user, new_token, verify_password
+from ..database import get_db
+from ..models import User
+from ..schemas import LoginIn, LoginOut, UserOut
+
+router = APIRouter(prefix="/api/auth", tags=["Авторизация"])
+
+
+@router.post("/login", response_model=LoginOut)
+def login(data: LoginIn, db: Session = Depends(get_db)):
+    user = db.query(User).filter(User.username == data.username).first()
+    if user is None or not verify_password(data.password, user.password_hash):
+        raise HTTPException(status_code=401, detail="Неверный логин или пароль")
+
+    user.token = new_token()
+    db.commit()
+    return {"token": user.token, "user": user}
+
+
+@router.get("/me", response_model=UserOut)
+def me(user: User = Depends(get_current_user)):
+    return user
+
+
+@router.post("/logout", status_code=204)
+def logout(user: User = Depends(get_current_user), db: Session = Depends(get_db)):
+    user.token = None
+    db.commit()

@@ -1,0 +1,11 @@
+.logo {
+  font-family: var(--font-sans);
+  font-weight: 700;
+  font-size: 24px;
+  letter-spacing: -0.04em;
+  line-height: 1;
+}
+
+.dot {
+  color: var(--color-accent);
+}
