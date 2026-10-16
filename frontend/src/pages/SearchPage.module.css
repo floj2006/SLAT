@@ -1,0 +1,17 @@
+.bar {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  flex-wrap: wrap;
+}
+
+.input {
+  width: 520px;
+  max-width: 100%;
+}
+
+@media (max-width: 767px) {
+  .input {
+    width: 100%;
+  }
+}

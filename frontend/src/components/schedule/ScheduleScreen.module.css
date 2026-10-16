@@ -1,0 +1,80 @@
+.screen {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-8);
+}
+
+.header {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: var(--space-4);
+  flex-wrap: wrap;
+}
+
+.controls {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.day {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.dayHeading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+}
+
+.dayTitle {
+  font: var(--text-h2);
+  letter-spacing: -0.015em;
+}
+
+.dayMeta {
+  font: var(--text-small);
+  color: var(--color-text-3);
+}
+
+.list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.skeleton {
+  height: 420px;
+  border-radius: var(--radius-lg);
+  background: linear-gradient(90deg, var(--color-surface-2), var(--color-surface), var(--color-surface-2));
+  background-size: 200% 100%;
+  animation: shimmer 1.2s linear infinite;
+}
+
+@keyframes shimmer {
+  to {
+    background-position: -200% 0;
+  }
+}
+
+@media (max-width: 767px) {
+  .screen {
+    gap: var(--space-5);
+  }
+
+  .header {
+    align-items: center;
+  }
+
+  .viewToggle {
+    display: none;
+  }
+
+  .dayTitle {
+    font: var(--text-h3);
+  }
+}

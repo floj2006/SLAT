@@ -1,0 +1,168 @@
+/* Стили административной панели */
+.notice {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-3) var(--space-4);
+  border-radius: var(--radius-md);
+  background: var(--color-replacement-soft);
+  color: var(--color-replacement);
+  font: var(--text-small);
+}
+
+.tabs {
+  overflow-x: auto;
+}
+
+.panel {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.toolbar {
+  display: flex;
+  align-items: flex-end;
+  gap: var(--space-3);
+  flex-wrap: wrap;
+}
+
+.toolbar > label {
+  width: 220px;
+}
+
+.grow {
+  flex: 1;
+}
+
+.tableWrap {
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  background: var(--color-surface);
+  box-shadow: var(--shadow-sm);
+  overflow-x: auto;
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  min-width: 760px;
+}
+
+.table th {
+  height: 40px;
+  padding: 0 16px;
+  background: var(--color-surface-2);
+  border-bottom: 1px solid var(--color-border);
+  font: 600 11px/14px var(--font-sans);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--color-text-3);
+  text-align: left;
+  white-space: nowrap;
+}
+
+.table td {
+  height: 56px;
+  padding: 0 16px;
+  border-bottom: 1px solid var(--color-border);
+  font: var(--text-small);
+  color: var(--color-text-2);
+}
+
+.table tr:last-child td {
+  border-bottom: none;
+}
+
+.table tbody tr:hover td {
+  background: var(--color-surface-2);
+}
+
+.strong {
+  color: var(--color-text);
+  font-weight: 500;
+}
+
+.mono {
+  font-family: var(--font-mono);
+  white-space: nowrap;
+}
+
+.actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 4px;
+}
+
+.iconButton {
+  display: grid;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  background: var(--color-surface);
+  color: var(--color-text-2);
+  cursor: pointer;
+}
+
+.iconButton:hover {
+  border-color: var(--color-border-strong);
+  color: var(--color-text);
+}
+
+.iconButton.danger:hover {
+  color: var(--color-cancelled);
+  border-color: var(--color-cancelled);
+}
+
+.footnote {
+  font: var(--text-small);
+  color: var(--color-text-3);
+}
+
+.empty {
+  padding: var(--space-8) !important;
+  text-align: center;
+  color: var(--color-text-3);
+}
+
+/* Формы в модальных окнах */
+.form {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-4);
+}
+
+.full {
+  grid-column: 1 / -1;
+}
+
+.formError {
+  grid-column: 1 / -1;
+  padding: var(--space-3) var(--space-4);
+  border-radius: var(--radius-md);
+  background: var(--color-cancelled-soft);
+  color: var(--color-cancelled);
+  font: var(--text-small);
+}
+
+.hint {
+  grid-column: 1 / -1;
+  font: var(--text-small);
+  color: var(--color-text-3);
+}
+
+.spacer {
+  flex: 1;
+}
+
+@media (max-width: 599px) {
+  .form {
+    grid-template-columns: 1fr;
+  }
+
+  .toolbar > label {
+    width: 100%;
+  }
+}

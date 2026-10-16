@@ -90,8 +90,10 @@ def test_lesson_crud_and_conflicts(client):
         "day_of_week": first["day_of_week"], "pair_number": first["pair_number"],
         "week_type": "both", "lesson_type": "Практика",
     }
-    # То же время у той же группы — конфликт
-    assert client.post("/api/lessons", json=payload, headers=headers).status_code == 409
+    # То же время у той же группы — конфликт, и сервер объясняет почему
+    conflict = client.post("/api/lessons", json=payload, headers=headers)
+    assert conflict.status_code == 409
+    assert conflict.json()["detail"] == "У группы уже есть занятие в это время"
 
     # Свободное время: суббота, 6-я пара
     payload.update(day_of_week=6, pair_number=6)
@@ -128,3 +130,10 @@ def test_cannot_delete_used_teacher(client):
     headers = login(client)
     teacher = client.get("/api/teachers").json()[0]
     assert client.delete(f"/api/teachers/{teacher['id']}", headers=headers).status_code == 409
+
+
+def test_demo_changes_are_fresh(client):
+    """Тестовые изменения создаются от сегодняшней даты, чтобы демо не «устаревало»."""
+    from datetime import date
+    changes = client.get("/api/changes", params={"date_from": date.today().isoformat()}).json()
+    assert len(changes) >= 5

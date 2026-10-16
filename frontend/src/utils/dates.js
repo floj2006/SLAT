@@ -66,3 +66,12 @@ export function timeToMinutes(text) {
   const [hours, minutes] = text.split(':').map(Number)
   return hours * 60 + minutes
 }
+
+// Номер недели по ISO (как в Python date.isocalendar().week)
+export function isoWeekNumber(date) {
+  const d = new Date(Date.UTC(date.getFullYear(), date.getMonth(), date.getDate()))
+  const day = d.getUTCDay() || 7
+  d.setUTCDate(d.getUTCDate() + 4 - day) // четверг этой недели определяет её номер
+  const yearStart = new Date(Date.UTC(d.getUTCFullYear(), 0, 1))
+  return Math.ceil(((d - yearStart) / 86400000 + 1) / 7)
+}

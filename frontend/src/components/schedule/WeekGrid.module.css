@@ -1,0 +1,104 @@
+.grid {
+  display: grid;
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.column {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  min-width: 0;
+}
+
+.head {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  padding: 4px 2px 8px;
+  border: none;
+  border-bottom: 1px solid var(--color-border);
+  background: none;
+  cursor: pointer;
+  text-align: left;
+}
+
+.head span {
+  font: var(--text-caption);
+  color: var(--color-text-3);
+}
+
+.head strong {
+  font: var(--text-h3);
+}
+
+.free {
+  font: var(--text-small);
+  color: var(--color-text-3);
+  padding: 8px 2px;
+}
+
+.lesson {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 10px 12px;
+  border: 1px solid var(--color-border);
+  border-left: 3px solid var(--color-border-strong);
+  border-radius: var(--radius-md);
+  background: var(--color-surface);
+}
+
+.time {
+  font: var(--text-mono);
+  font-size: 12px;
+  color: var(--color-text-3);
+}
+
+.subject {
+  font: var(--text-small);
+  font-weight: 600;
+}
+
+.place {
+  font: var(--text-caption);
+  color: var(--color-text-3);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.now {
+  border-left-color: var(--color-accent);
+}
+
+.replacement {
+  border-left-color: var(--color-replacement);
+}
+
+.room {
+  border-left-color: var(--color-room);
+}
+
+.cancelled {
+  background: var(--color-surface-2);
+  border-left-color: var(--color-cancelled);
+}
+
+.cancelled .subject {
+  text-decoration: line-through;
+  color: var(--color-text-3);
+}
+
+@media (max-width: 1023px) {
+  .grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    row-gap: 24px;
+  }
+}
+
+@media (max-width: 599px) {
+  .grid {
+    grid-template-columns: 1fr;
+  }
+}

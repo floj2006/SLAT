@@ -11,7 +11,7 @@ from datetime import date, timedelta
 from .auth import hash_password
 from .database import Base, SessionLocal, engine
 from .models import Classroom, Group, Lesson, ScheduleChange, Subject, Teacher, User
-from .schedule_service import monday_of, week_type_of
+from .schedule_service import week_type_of
 
 GROUPS = [
     ("ИС-21", 2, "Информационные системы и программирование"),
@@ -126,35 +126,48 @@ def pick_substitute(lesson, teachers):
     return next(t for t in teachers if t.id != lesson.teacher_id)
 
 
-def create_changes(db, teachers, classrooms):
-    """Несколько изменений на текущую и следующую неделю — чтобы было что показать."""
-    today = date.today()
-    this_monday = monday_of(today)
-    lessons = db.query(Lesson).order_by(Lesson.id).all()
-    plans = [
-        (0, 0, "replacement"), (0, 7, "room"), (1, 12, "cancelled"),
-        (1, 3, "replacement"), (2, 20, "room"), (3, 31, "cancelled"),
-        (4, 9, "replacement"), (7, 15, "room"), (8, 40, "replacement"), (9, 50, "cancelled"),
-    ]
-    comments = {
-        "replacement": "Преподаватель на курсах повышения квалификации",
-        "room": "В аудитории ремонт проектора",
-        "cancelled": "Перенос по приказу учебной части",
-    }
-    for day_offset, lesson_shift, change_type in plans:
-        target_day = this_monday + timedelta(days=day_offset)
-        if target_day.isoweekday() == 7:
-            continue
-        candidates = [
-            ls for ls in lessons
+def demo_days():
+    """Сегодня и следующие учебные дни (без воскресений) — чтобы демо всегда было «живым»."""
+    day = date.today()
+    days = []
+    while len(days) < 6:
+        if day.isoweekday() != 7:
+            days.append(day)
+        day += timedelta(days=1)
+    return days
+
+
+# (номер учебного дня от сегодня, группа, какая по счёту пара группы в этот день, тип)
+CHANGE_PLAN = [
+    (0, "ИС-21", 0, "replacement"), (0, "ИС-21", -1, "cancelled"), (0, "ПР-31", 0, "room"),
+    (0, "ВЕБ-23", 1, "replacement"), (1, "ИС-21", 1, "room"), (1, "СА-24", 0, "replacement"),
+    (2, "ДИЗ-22", 0, "cancelled"), (2, "ИС-22", 1, "replacement"), (3, "ИС-21", 0, "replacement"),
+    (4, "ПР-31", -1, "cancelled"),
+]
+COMMENTS = {
+    "replacement": "Преподаватель на курсах повышения квалификации",
+    "room": "В аудитории ремонт проектора",
+    "cancelled": "Перенос по приказу учебной части",
+}
+
+
+def create_changes(db, groups, teachers, classrooms):
+    """Несколько изменений на ближайшие дни — чтобы было что показать."""
+    days = demo_days()
+    group_by_name = {g.name: g for g in groups}
+    for day_index, group_name, position, change_type in CHANGE_PLAN:
+        target_day = days[day_index]
+        lessons = [
+            ls for ls in group_by_name[group_name].lessons
             if ls.day_of_week == target_day.isoweekday()
             and ls.week_type in ("both", week_type_of(target_day))
         ]
-        if not candidates:
+        if not lessons:
             continue
-        lesson = candidates[lesson_shift % len(candidates)]
+        lessons.sort(key=lambda ls: ls.pair_number)
+        lesson = lessons[position % len(lessons)]
         change = ScheduleChange(lesson=lesson, date=target_day, change_type=change_type,
-                                comment=comments[change_type])
+                                comment=COMMENTS[change_type])
         if change_type == "replacement":
             change.new_teacher = pick_substitute(lesson, teachers)
         if change_type == "room":
@@ -172,7 +185,8 @@ def seed(db):
 
     create_lessons(db, groups, subjects, teachers, classrooms)
     db.flush()
-    create_changes(db, teachers, classrooms)
+    db.expire_all()  # чтобы group.lessons увидели только что добавленные занятия
+    create_changes(db, groups, teachers, classrooms)
 
     db.add(User(username="admin", password_hash=hash_password("admin123"), role="admin"))
     db.add(User(username="student", password_hash=hash_password("student123"), role="viewer"))

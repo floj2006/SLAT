@@ -54,16 +54,21 @@ def check_conflicts(db: Session, data: LessonIn, skip_id: Optional[int] = None):
         .filter(Lesson.day_of_week == data.day_of_week, Lesson.pair_number == data.pair_number)
         .all()
     )
-    for other in same_time:
-        if other.id == skip_id or not weeks_overlap(other.week_type, data.week_type):
-            continue
+    overlapping = [
+        other for other in same_time
+        if other.id != skip_id and weeks_overlap(other.week_type, data.week_type)
+    ]
+    # Сначала проверяем группу, потом преподавателя, потом аудиторию
+    for other in overlapping:
         if other.group_id == data.group_id:
             raise HTTPException(status_code=409, detail="У группы уже есть занятие в это время")
+    for other in overlapping:
         if other.teacher_id == data.teacher_id:
             raise HTTPException(
                 status_code=409,
                 detail=f"Преподаватель уже ведёт занятие у группы {other.group.name} в это время",
             )
+    for other in overlapping:
         if other.classroom_id == data.classroom_id:
             raise HTTPException(
                 status_code=409,
