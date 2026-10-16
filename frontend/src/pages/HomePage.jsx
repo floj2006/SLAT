@@ -59,7 +59,7 @@ function HomePage() {
           за пару секунд<span className={styles.dot}>.</span>
         </h1>
         <p className={styles.lead}>
-          Куда идти, к какой паре и не отменили ли её — всё здесь.
+          Чтобы утром не гадать, где первая пара.
         </p>
         <form className={styles.search} onSubmit={handleSubmit}>
           <Input

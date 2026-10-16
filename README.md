@@ -12,6 +12,7 @@
 | Как устроен код — разбор по файлам | [`LEARN.md`](LEARN.md) |
 | Сценарий защиты и вопросы | [`DEFENSE.md`](DEFENSE.md) |
 | Правила текстов интерфейса | [`COPY.md`](COPY.md) |
+| Проверка безопасности | [`SECURITY.md`](SECURITY.md) |
 | Как собран макет Figma | [`figma/README.md`](figma/README.md) |
 
 ## Запуск на Windows (PowerShell)
@@ -69,7 +70,7 @@ npm run dev
 
 ```powershell
 cd backend
-python -m pytest -q      # 10 автотестов API: CRUD, конфликты, 401/403, валидация
+python -m pytest -q      # 12 автотестов API: CRUD, конфликты, 401/403, валидация, безопасность
 ```
 
 ## Структура

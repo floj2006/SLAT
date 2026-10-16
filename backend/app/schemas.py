@@ -23,9 +23,9 @@ class OrmModel(BaseModel):
 # ---------- Справочники ----------
 
 class GroupIn(BaseModel):
-    name: str = Field(min_length=1)
+    name: str = Field(min_length=1, max_length=50)
     course: int = Field(ge=1, le=4)
-    specialty: str = Field(min_length=1)
+    specialty: str = Field(min_length=1, max_length=200)
 
 
 class GroupOut(OrmModel, GroupIn):
@@ -33,9 +33,9 @@ class GroupOut(OrmModel, GroupIn):
 
 
 class TeacherIn(BaseModel):
-    full_name: str = Field(min_length=1)
-    department: str = Field(min_length=1)
-    email: str = ""
+    full_name: str = Field(min_length=1, max_length=150)
+    department: str = Field(min_length=1, max_length=150)
+    email: str = Field(default="", max_length=254)
 
 
 class TeacherOut(OrmModel, TeacherIn):
@@ -43,7 +43,7 @@ class TeacherOut(OrmModel, TeacherIn):
 
 
 class SubjectIn(BaseModel):
-    name: str = Field(min_length=1)
+    name: str = Field(min_length=1, max_length=150)
 
 
 class SubjectOut(OrmModel, SubjectIn):
@@ -51,9 +51,9 @@ class SubjectOut(OrmModel, SubjectIn):
 
 
 class ClassroomIn(BaseModel):
-    number: str = Field(min_length=1)
-    building: str = Field(min_length=1)
-    capacity: int = Field(ge=1, default=30)
+    number: str = Field(min_length=1, max_length=20)
+    building: str = Field(min_length=1, max_length=100)
+    capacity: int = Field(ge=1, le=1000, default=30)
 
 
 class ClassroomOut(OrmModel, ClassroomIn):
@@ -70,7 +70,7 @@ class LessonIn(BaseModel):
     day_of_week: int = Field(ge=1, le=6)
     pair_number: int = Field(ge=1, le=6)
     week_type: WeekType = "both"
-    lesson_type: str = "Лекция"
+    lesson_type: str = Field(default="Лекция", max_length=50)
 
 
 class LessonOut(OrmModel):
@@ -93,7 +93,7 @@ class ChangeIn(BaseModel):
     change_type: ChangeType
     new_teacher_id: Optional[int] = None
     new_classroom_id: Optional[int] = None
-    comment: str = ""
+    comment: str = Field(default="", max_length=300)
 
 
 class ChangeOut(OrmModel):

@@ -146,3 +146,17 @@ def test_texts_plural():
     assert [plural(n, "занятие", "занятия", "занятий") for n in (1, 3, 5, 11, 21)] == [
         "1 занятие", "3 занятия", "5 занятий", "11 занятий", "21 занятие"]
     assert short_name("Морозова Алина Сергеевна") == "Морозова А. С."
+
+
+def test_max_length_rejected(client):
+    headers = login(client)
+    r = client.post("/api/subjects", json={"name": "A" * 100000}, headers=headers)
+    assert r.status_code == 422  # слишком длинную строку отклоняет проверка схемы
+
+
+def test_unknown_user_same_message(client):
+    # Несуществующий логин и неверный пароль дают одинаковый ответ — не выдаём, какие логины есть
+    r1 = client.post("/api/auth/login", json={"username": "admin", "password": "nope"})
+    r2 = client.post("/api/auth/login", json={"username": "ghost", "password": "nope"})
+    assert r1.status_code == r2.status_code == 401
+    assert r1.json()["detail"] == r2.json()["detail"]

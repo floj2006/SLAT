@@ -3,7 +3,7 @@
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 
-from ..auth import get_current_user, new_token, verify_password
+from ..auth import check_login, get_current_user, new_token
 from ..database import get_db
 from ..models import User
 from ..schemas import LoginIn, LoginOut, UserOut
@@ -14,7 +14,7 @@ router = APIRouter(prefix="/api/auth", tags=["Авторизация"])
 @router.post("/login", response_model=LoginOut)
 def login(data: LoginIn, db: Session = Depends(get_db)):
     user = db.query(User).filter(User.username == data.username).first()
-    if user is None or not verify_password(data.password, user.password_hash):
+    if not check_login(user, data.password):
         raise HTTPException(status_code=401, detail="Неверный логин или пароль. Проверьте раскладку и Caps Lock.")
 
     user.token = new_token()

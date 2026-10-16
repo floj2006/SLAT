@@ -36,6 +36,20 @@ def verify_password(password: str, saved_hash: str) -> bool:
     return hmac.compare_digest(digest.hex(), expected)
 
 
+# Хеш-заглушка от случайного пароля. По нему «проверяем» пароль, когда логина
+# нет, — тогда ответ на несуществующий логин длится столько же, сколько на
+# существующий, и по времени нельзя угадать, какие логины заведены в системе.
+_DUMMY_HASH = hash_password(secrets.token_hex(16))
+
+
+def check_login(user, password: str) -> bool:
+    """Безопасная проверка логина: одинаковое время для любого исхода."""
+    if user is None:
+        verify_password(password, _DUMMY_HASH)  # считаем «вхолостую»
+        return False
+    return verify_password(password, user.password_hash)
+
+
 def new_token() -> str:
     return secrets.token_hex(24)
 
