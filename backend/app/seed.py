@@ -6,6 +6,7 @@
 только если база пустая.
 """
 
+import os
 from datetime import date, timedelta
 
 from .auth import hash_password
@@ -188,7 +189,9 @@ def seed(db):
     db.expire_all()  # чтобы group.lessons увидели только что добавленные занятия
     create_changes(db, groups, teachers, classrooms)
 
-    db.add(User(username="admin", password_hash=hash_password("admin123"), role="admin"))
+    # Пароль администратора можно задать переменной окружения ADMIN_PASSWORD (так сделано на Vercel)
+    admin_password = os.environ.get("ADMIN_PASSWORD", "admin123")
+    db.add(User(username="admin", password_hash=hash_password(admin_password), role="admin"))
     db.add(User(username="student", password_hash=hash_password("student123"), role="viewer"))
     db.commit()
 

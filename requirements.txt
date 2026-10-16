@@ -1,0 +1,4 @@
+# Зависимости серверной функции на Vercel (локально используйте backend/requirements.txt)
+fastapi>=0.115
+sqlalchemy>=2.0
+pydantic>=2.10

@@ -6,13 +6,18 @@
 - Base — родительский класс для всех моделей-таблиц из models.py.
 """
 
+import os
 from pathlib import Path
 
 from sqlalchemy import create_engine
 from sqlalchemy.orm import declarative_base, sessionmaker
 
-# Файл базы лежит рядом с папкой app: backend/slot.db
-DB_PATH = Path(__file__).resolve().parent.parent / "slot.db"
+# Локально файл базы лежит рядом с папкой app: backend/slot.db.
+# На Vercel папка проекта только для чтения, поэтому база создаётся во временной папке /tmp.
+if os.environ.get("VERCEL"):
+    DB_PATH = Path("/tmp/slot.db")
+else:
+    DB_PATH = Path(__file__).resolve().parent.parent / "slot.db"
 DATABASE_URL = f"sqlite:///{DB_PATH}"
 
 # check_same_thread=False нужен SQLite, потому что FastAPI
