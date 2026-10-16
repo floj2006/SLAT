@@ -93,7 +93,7 @@ def test_lesson_crud_and_conflicts(client):
     # То же время у той же группы — конфликт, и сервер объясняет почему
     conflict = client.post("/api/lessons", json=payload, headers=headers)
     assert conflict.status_code == 409
-    assert conflict.json()["detail"] == "У группы уже есть занятие в это время"
+    assert conflict.json()["detail"].startswith(f"У группы {group['name']} в это время уже стоит")
 
     # Свободное время: суббота, 6-я пара
     payload.update(day_of_week=6, pair_number=6)
@@ -116,7 +116,9 @@ def test_change_validation_and_create(client):
 
     # 2026-10-13 — вторник, а занятие в понедельник
     wrong_day = {"lesson_id": lesson["id"], "date": "2026-10-13", "change_type": "cancelled"}
-    assert client.post("/api/changes", json=wrong_day, headers=headers).status_code == 400
+    response = client.post("/api/changes", json=wrong_day, headers=headers)
+    assert response.status_code == 400
+    assert response.json()["detail"] == "Эта пара проходит по понедельникам, а 13.10 — вторник. Выберите другую дату."
 
     payload = {"lesson_id": lesson["id"], "date": "2026-11-02", "change_type": "replacement",
                "new_teacher_id": teacher["id"], "comment": "Тест"}
@@ -137,3 +139,10 @@ def test_demo_changes_are_fresh(client):
     from datetime import date
     changes = client.get("/api/changes", params={"date_from": date.today().isoformat()}).json()
     assert len(changes) >= 5
+
+
+def test_texts_plural():
+    from app.texts import plural, short_name
+    assert [plural(n, "занятие", "занятия", "занятий") for n in (1, 3, 5, 11, 21)] == [
+        "1 занятие", "3 занятия", "5 занятий", "11 занятий", "21 занятие"]
+    assert short_name("Морозова Алина Сергеевна") == "Морозова А. С."

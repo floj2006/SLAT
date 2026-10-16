@@ -12,6 +12,9 @@ export const BELLS = {
 
 export const DAY_NAMES = ['Понедельник', 'Вторник', 'Среда', 'Четверг', 'Пятница', 'Суббота']
 export const DAY_SHORT = ['Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб']
+// Для фраз «по понедельникам» и «в понедельник / во вторник»
+export const DAY_PLURAL_DATIVE = ['понедельникам', 'вторникам', 'средам', 'четвергам', 'пятницам', 'субботам']
+export const DAY_ACCUSATIVE = ['в понедельник', 'во вторник', 'в среду', 'в четверг', 'в пятницу', 'в субботу']
 
 export const WEEK_TYPES = {
   both: 'Каждую неделю',
@@ -19,10 +22,18 @@ export const WEEK_TYPES = {
   even: 'Чётная',
 }
 
+// Тип изменения — одним словом (метки, списки в формах)
 export const CHANGE_TYPES = {
   replacement: 'Замена',
   room: 'Другая аудитория',
-  cancelled: 'Отменено',
+  cancelled: 'Отмена',
+}
+
+// Те же типы во множественном числе — для фильтров и счётчиков
+export const CHANGE_TYPES_PLURAL = {
+  replacement: 'Замены',
+  room: 'Другая аудитория',
+  cancelled: 'Отмены',
 }
 
 export const LESSON_TYPES = ['Лекция', 'Практика', 'Лабораторная']

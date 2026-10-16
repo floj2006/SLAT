@@ -17,6 +17,7 @@ from ..database import get_db
 from ..models import Classroom, Lesson, ScheduleChange, Teacher
 from ..schedule_service import week_type_of
 from ..schemas import ChangeIn, ChangeOut
+from ..texts import DAY_PLURAL_DATIVE, WEEKDAY_NAMES
 
 router = APIRouter(prefix="/api/changes", tags=["Изменения"])
 
@@ -32,20 +33,30 @@ def validate_change(db: Session, data: ChangeIn):
     """Проверяет, что изменение имеет смысл."""
     lesson = db.get(Lesson, data.lesson_id)
     if lesson is None:
-        raise HTTPException(status_code=400, detail="Такого занятия нет")
+        raise HTTPException(status_code=400, detail="Не удалось найти занятие — возможно, его удалили. Обновите страницу.")
 
     # Дата должна совпадать с днём недели занятия (isoweekday: 1 = понедельник)
+    day = data.date.strftime("%d.%m")
     if data.date.isoweekday() != lesson.day_of_week:
-        raise HTTPException(status_code=400, detail="В эту дату у занятия нет пары — другой день недели")
+        raise HTTPException(
+            status_code=400,
+            detail=f"Эта пара проходит по {DAY_PLURAL_DATIVE[lesson.day_of_week - 1]}, "
+            f"а {day} — {WEEKDAY_NAMES[data.date.weekday()]}. Выберите другую дату.",
+        )
     if lesson.week_type not in ("both", week_type_of(data.date)):
-        raise HTTPException(status_code=400, detail="В эту неделю занятие не проводится")
+        parity = "нечётным" if lesson.week_type == "odd" else "чётным"
+        actual = "нечётная" if week_type_of(data.date) == "odd" else "чётная"
+        raise HTTPException(
+            status_code=400,
+            detail=f"Эта пара идёт только по {parity} неделям, а {day} — {actual} неделя. Выберите другую дату.",
+        )
 
     if data.change_type == "replacement":
         if data.new_teacher_id is None or db.get(Teacher, data.new_teacher_id) is None:
-            raise HTTPException(status_code=400, detail="Для замены выберите преподавателя")
+            raise HTTPException(status_code=400, detail="Укажите, кто заменяет преподавателя.")
     if data.change_type == "room":
         if data.new_classroom_id is None or db.get(Classroom, data.new_classroom_id) is None:
-            raise HTTPException(status_code=400, detail="Для переноса выберите аудиторию")
+            raise HTTPException(status_code=400, detail="Укажите новую аудиторию.")
 
 
 @router.get("", response_model=list[ChangeOut])
@@ -84,7 +95,7 @@ def create_change(data: ChangeIn, db: Session = Depends(get_db)):
         .first()
     )
     if exists:
-        raise HTTPException(status_code=409, detail="Для этой пары в эту дату изменение уже есть")
+        raise HTTPException(status_code=409, detail="У этой пары на эту дату уже есть изменение. Найдите его в списке и отредактируйте.")
     change = ScheduleChange()
     save_fields(change, data)
     db.add(change)

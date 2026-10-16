@@ -23,7 +23,7 @@ function DirectoryPanel({ config, items, onChanged }) {
   async function handleDelete() {
     try {
       await deleteItem(config.resource, deleting.id)
-      showToast('Запись удалена')
+      showToast(config.deletedToast)
       onChanged()
     } catch (err) {
       showToast(err.message, 'error') // например: «Нельзя удалить: преподаватель ведёт 12 занятий»
@@ -34,7 +34,7 @@ function DirectoryPanel({ config, items, onChanged }) {
   function handleSaved() {
     setEditing(null)
     onChanged()
-    showToast('Сохранено')
+    showToast(config.savedToast)
   }
 
   return (
@@ -84,7 +84,12 @@ function DirectoryPanel({ config, items, onChanged }) {
         <DirectoryForm config={config} item={editing.id ? editing : null} onClose={() => setEditing(null)} onSaved={handleSaved} />
       )}
       {deleting && (
-        <ConfirmDialog text={`«${deleting[config.fields[0].name]}» будет удалено.`} onConfirm={handleDelete} onClose={() => setDeleting(null)} />
+        <ConfirmDialog
+          title={config.deleteTitle}
+          text={`«${deleting[config.fields[0].name]}» пропадёт из справочника. Если запись используется в расписании, сервер не даст её удалить.`}
+          onConfirm={handleDelete}
+          onClose={() => setDeleting(null)}
+        />
       )}
     </div>
   )
@@ -114,7 +119,7 @@ function DirectoryForm({ config, item, onClose, onSaved }) {
 
   return (
     <Modal
-      title={item ? 'Изменить запись' : config.addLabel}
+      title={item ? config.editTitle : config.addLabel}
       onClose={onClose}
       footer={
         <>
@@ -122,7 +127,7 @@ function DirectoryForm({ config, item, onClose, onSaved }) {
             Отмена
           </Button>
           <Button variant="primary" type="submit" form="directory-form">
-            Сохранить
+            {item ? 'Сохранить' : 'Добавить'}
           </Button>
         </>
       }

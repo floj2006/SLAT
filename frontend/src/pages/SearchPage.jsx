@@ -57,7 +57,7 @@ function SearchPage() {
         <div className={local.input}>
           <Input
             icon={Search}
-            placeholder="Группа, фамилия или кафедра"
+            placeholder="Группа, фамилия преподавателя или кафедра"
             value={query}
             onChange={(event) => setQuery(event.target.value)}
             autoFocus
@@ -75,7 +75,7 @@ function SearchPage() {
         />
       </div>
 
-      {nothing && <EmptyState icon={SearchX} title="Ничего не нашлось" text="Попробуйте часть названия: «ис», «мор», «сети»." />}
+      {nothing && <EmptyState icon={SearchX} title="Ничего не нашлось" text="Попробуйте начало названия группы или фамилии: «ИС», «Мор»." />}
 
       {showGroups && results.groups.length > 0 && (
         <section className={styles.list}>

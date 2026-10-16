@@ -8,6 +8,7 @@ import EmptyState from '../components/ui/EmptyState.jsx'
 import GroupCard from '../components/schedule/GroupCard.jsx'
 import { getLastGroupId } from '../utils/storage.js'
 import { isoWeekNumber, toISODate } from '../utils/dates.js'
+import { FORMS, capitalize, countLabel } from '../utils/text.js'
 import styles from './HomePage.module.css'
 
 // Группируем группы по курсу: { 1: [...], 2: [...] }
@@ -20,15 +21,6 @@ function groupByCourse(groups) {
   return result
 }
 
-function capitalize(text) {
-  return text.charAt(0).toUpperCase() + text.slice(1)
-}
-
-function groupsLabel(count) {
-  if (count === 1) return '1 группа'
-  if (count < 5) return `${count} группы`
-  return `${count} групп`
-}
 
 function HomePage() {
   const [groups, setGroups] = useState([])
@@ -67,7 +59,7 @@ function HomePage() {
           за пару секунд<span className={styles.dot}>.</span>
         </h1>
         <p className={styles.lead}>
-          Выберите группу, чтобы увидеть занятия, замены и свободные окна. Без Excel-таблиц.
+          Найдите свою группу — и сразу увидите пары на сегодня, замены и отмены. Без Excel-таблиц.
         </p>
         <form className={styles.search} onSubmit={handleSubmit}>
           <Input
@@ -80,7 +72,7 @@ function HomePage() {
         </form>
         {lastGroup && (
           <p className={styles.recent}>
-            Недавно открывали:{' '}
+            Вы недавно смотрели:{' '}
             <Link to={`/group/${lastGroup.id}`} className={styles.recentLink}>
               {lastGroup.name}
             </Link>
@@ -90,16 +82,21 @@ function HomePage() {
 
       <ChangesBanner changes={todayChanges} />
 
-      {error && <EmptyState icon={SearchX} title="Сервер недоступен" text={`${error}. Запущен ли backend?`} />}
+      {error && <EmptyState icon={SearchX} title="Не удалось загрузить группы" text={error} />}
       {!error && groups.length > 0 && filtered.length === 0 && (
-        <EmptyState icon={SearchX} title="Группа не найдена" text="Проверьте название или откройте поиск преподавателей." />
+        <EmptyState
+          icon={SearchX}
+          title="Такой группы нет"
+          text="Проверьте название: например, «ИС-21». Ищете преподавателя? Откройте поиск."
+          action={<Link to="/search" className={styles.recentLink}>Перейти к поиску</Link>}
+        />
       )}
 
       {Object.entries(byCourse).map(([course, list]) => (
         <section key={course} className={styles.course}>
           <div className={styles.courseHead}>
             <h2 className={styles.courseTitle}>{course} курс</h2>
-            <span className={styles.courseCount}>{groupsLabel(list.length)}</span>
+            <span className={styles.courseCount}>{countLabel(list.length, FORMS.group)}</span>
           </div>
           <div className={styles.grid}>
             {list.map((group) => (
@@ -115,6 +112,15 @@ function HomePage() {
 // Плашка «Сегодня N изменений» (в Figma — Changes Banner)
 function ChangesBanner({ changes }) {
   const count = (type) => changes.filter((change) => change.change_type === type).length
+  // Показываем только то, что есть: «2 замены · 1 отмена»
+  const details = [
+    [count('replacement'), FORMS.replacement],
+    [count('room'), FORMS.room],
+    [count('cancelled'), FORMS.cancel],
+  ]
+    .filter(([n]) => n > 0)
+    .map(([n, forms]) => countLabel(n, forms))
+    .join(' · ')
 
   return (
     <Link to="/changes" className={styles.banner}>
@@ -122,13 +128,13 @@ function ChangesBanner({ changes }) {
         <RefreshCcw size={19} />
       </span>
       <span className={styles.bannerText}>
-        <strong>{changes.length > 0 ? `Сегодня изменений в расписании: ${changes.length}` : 'Сегодня изменений нет'}</strong>
-        <span>
-          Замены: {count('replacement')} · другая аудитория: {count('room')} · отмены: {count('cancelled')}
-        </span>
+        <strong>
+          {changes.length > 0 ? `Сегодня ${countLabel(changes.length, FORMS.change)} в расписании` : 'Сегодня всё по расписанию'}
+        </strong>
+        <span>{changes.length > 0 ? details : 'Замен и отмен нет — пары идут как обычно'}</span>
       </span>
       <span className={styles.bannerLink}>
-        Смотреть <ArrowRight size={15} />
+        {changes.length > 0 ? 'Подробнее' : 'Все изменения'} <ArrowRight size={15} />
       </span>
     </Link>
   )

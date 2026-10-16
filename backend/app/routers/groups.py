@@ -10,6 +10,7 @@ from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 
 from ..auth import require_admin
+from ..texts import in_use_message
 from ..database import get_db
 from ..models import Group
 from ..schemas import GroupIn, GroupOut
@@ -37,7 +38,7 @@ def get_group(group_id: int, db: Session = Depends(get_db)):
 @router.post("", response_model=GroupOut, status_code=201, dependencies=[Depends(require_admin)])
 def create_group(data: GroupIn, db: Session = Depends(get_db)):
     if db.query(Group).filter(Group.name == data.name).first():
-        raise HTTPException(status_code=409, detail="Группа с таким названием уже есть")
+        raise HTTPException(status_code=409, detail="Группа с таким названием уже есть. Проверьте список групп.")
     group = Group(**data.model_dump())
     db.add(group)
     db.commit()
@@ -59,9 +60,6 @@ def update_group(group_id: int, data: GroupIn, db: Session = Depends(get_db)):
 def delete_group(group_id: int, db: Session = Depends(get_db)):
     group = find_group(db, group_id)
     if group.lessons:
-        raise HTTPException(
-            status_code=409,
-            detail=f"Нельзя удалить: у группы {len(group.lessons)} занятий в расписании",
-        )
+        raise HTTPException(status_code=409, detail=in_use_message("группа", len(group.lessons)))
     db.delete(group)
     db.commit()

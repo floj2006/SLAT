@@ -18,6 +18,7 @@ from ..auth import require_admin
 from ..database import get_db
 from ..models import Classroom, Group, Lesson, Subject, Teacher
 from ..schemas import LessonIn, LessonOut
+from ..texts import short_name
 
 router = APIRouter(prefix="/api/lessons", tags=["Занятия"])
 
@@ -32,14 +33,17 @@ def find_lesson(db: Session, lesson_id: int) -> Lesson:
 def check_references(db: Session, data: LessonIn):
     """Проверяет, что группа, предмет, преподаватель и аудитория существуют."""
     checks = [
-        (Group, data.group_id, "Группа"),
-        (Subject, data.subject_id, "Предмет"),
-        (Teacher, data.teacher_id, "Преподаватель"),
-        (Classroom, data.classroom_id, "Аудитория"),
+        (Group, data.group_id, "группу"),
+        (Subject, data.subject_id, "предмет"),
+        (Teacher, data.teacher_id, "преподавателя"),
+        (Classroom, data.classroom_id, "аудиторию"),
     ]
     for model, item_id, title in checks:
         if db.get(model, item_id) is None:
-            raise HTTPException(status_code=400, detail=f"{title} с id={item_id} не существует")
+            raise HTTPException(
+                status_code=400,
+                detail=f"Не удалось найти {title} — возможно, запись только что удалили. Обновите страницу.",
+            )
 
 
 def weeks_overlap(week_a: str, week_b: str) -> bool:
@@ -61,18 +65,24 @@ def check_conflicts(db: Session, data: LessonIn, skip_id: Optional[int] = None):
     # Сначала проверяем группу, потом преподавателя, потом аудиторию
     for other in overlapping:
         if other.group_id == data.group_id:
-            raise HTTPException(status_code=409, detail="У группы уже есть занятие в это время")
+            raise HTTPException(
+                status_code=409,
+                detail=f"У группы {other.group.name} в это время уже стоит «{other.subject.name}». "
+                "Выберите другую пару или измените существующую.",
+            )
     for other in overlapping:
         if other.teacher_id == data.teacher_id:
             raise HTTPException(
                 status_code=409,
-                detail=f"Преподаватель уже ведёт занятие у группы {other.group.name} в это время",
+                detail=f"{short_name(other.teacher.full_name)} в это время ведёт пару у группы {other.group.name}. "
+                "Выберите другое время или другого преподавателя.",
             )
     for other in overlapping:
         if other.classroom_id == data.classroom_id:
             raise HTTPException(
                 status_code=409,
-                detail=f"Аудитория занята группой {other.group.name} в это время",
+                detail=f"Аудитория {other.classroom.number} в это время занята группой {other.group.name}. "
+                "Выберите другую аудиторию.",
             )
 
 

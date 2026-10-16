@@ -2,13 +2,14 @@ import { ArrowRight, MapPin, User, Users, Clock, ArrowRightLeft, DoorOpen, Ban }
 import Badge from '../ui/Badge.jsx'
 import { BELLS } from '../../data/constants.js'
 import { getPairProgress, roomLabel, shortName } from './lessonStatus.js'
+import { pairLabel } from '../../utils/text.js'
 import styles from './LessonCard.module.css'
 
 const STATUS_BADGES = {
   now: { tone: 'now', icon: Clock, text: 'Идёт сейчас' },
   replacement: { tone: 'replacement', icon: ArrowRightLeft, text: 'Замена' },
   room: { tone: 'room', icon: DoorOpen, text: 'Другая аудитория' },
-  cancelled: { tone: 'cancelled', icon: Ban, text: 'Отменено' },
+  cancelled: { tone: 'cancelled', icon: Ban, text: 'Отменена' },
 }
 
 /*
@@ -26,7 +27,7 @@ function LessonCard({ item, status, mode = 'group' }) {
   return (
     <article className={`${styles.card} ${styles[status]}`}>
       <div className={styles.time}>
-        <span className={styles.pair}>{lesson.pair_number} пара</span>
+        <span className={styles.pair}>{pairLabel(lesson.pair_number)}</span>
         <span className={styles.start}>{bell.start}</span>
         <span className={styles.end}>{bell.end}</span>
       </div>

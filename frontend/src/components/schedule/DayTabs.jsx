@@ -1,13 +1,11 @@
 import { DAY_SHORT } from '../../data/constants.js'
 import { fromISODate, isSameDay } from '../../utils/dates.js'
+import { FORMS, countLabel } from '../../utils/text.js'
 import styles from './DayTabs.module.css'
 
-// Склонение: 1 пара, 2 пары, 5 пар
+// «нет пар», «1 пара», «3 пары», «5 пар»
 export function pairsLabel(count) {
-  if (count === 0) return 'нет пар'
-  if (count === 1) return '1 пара'
-  if (count < 5) return `${count} пары`
-  return `${count} пар`
+  return count === 0 ? 'нет пар' : countLabel(count, FORMS.pair)
 }
 
 /*

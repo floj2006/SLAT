@@ -2,6 +2,7 @@ import { ArrowRight, ArrowRightLeft, Ban, DoorOpen } from 'lucide-react'
 import Badge from '../ui/Badge.jsx'
 import { BELLS, CHANGE_TYPES } from '../../data/constants.js'
 import { roomLabel, shortName } from './lessonStatus.js'
+import { pairLabel } from '../../utils/text.js'
 import styles from './ChangeRow.module.css'
 
 const ICONS = { replacement: ArrowRightLeft, room: DoorOpen, cancelled: Ban }
@@ -16,7 +17,7 @@ function ChangeRow({ change }) {
   return (
     <article className={styles.row}>
       <div className={styles.time}>
-        <span className={styles.pair}>{lesson.pair_number} пара</span>
+        <span className={styles.pair}>{pairLabel(lesson.pair_number)}</span>
         <span className={styles.start}>{BELLS[lesson.pair_number].start}</span>
       </div>
 
@@ -62,7 +63,7 @@ function Details({ change }) {
   }
   return (
     <p className={styles.details}>
-      {shortName(lesson.teacher.full_name)} · ауд. {lesson.classroom.number}
+      Пары не будет · {shortName(lesson.teacher.full_name)}, ауд. {lesson.classroom.number}
     </p>
   )
 }

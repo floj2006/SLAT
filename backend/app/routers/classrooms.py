@@ -4,6 +4,7 @@ from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 
 from ..auth import require_admin
+from ..texts import in_use_message
 from ..database import get_db
 from ..models import Classroom
 from ..schemas import ClassroomIn, ClassroomOut
@@ -26,7 +27,7 @@ def list_classrooms(db: Session = Depends(get_db)):
 @router.post("", response_model=ClassroomOut, status_code=201, dependencies=[Depends(require_admin)])
 def create_classroom(data: ClassroomIn, db: Session = Depends(get_db)):
     if db.query(Classroom).filter(Classroom.number == data.number).first():
-        raise HTTPException(status_code=409, detail="Аудитория с таким номером уже есть")
+        raise HTTPException(status_code=409, detail="Аудитория с таким номером уже есть в справочнике.")
     classroom = Classroom(**data.model_dump())
     db.add(classroom)
     db.commit()
@@ -48,9 +49,6 @@ def update_classroom(classroom_id: int, data: ClassroomIn, db: Session = Depends
 def delete_classroom(classroom_id: int, db: Session = Depends(get_db)):
     classroom = find_classroom(db, classroom_id)
     if classroom.lessons:
-        raise HTTPException(
-            status_code=409,
-            detail=f"Нельзя удалить: в аудитории проходят {len(classroom.lessons)} занятий",
-        )
+        raise HTTPException(status_code=409, detail=in_use_message("аудитория", len(classroom.lessons)))
     db.delete(classroom)
     db.commit()

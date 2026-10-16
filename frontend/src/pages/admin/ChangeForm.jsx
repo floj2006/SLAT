@@ -3,7 +3,7 @@ import Modal from '../../components/ui/Modal.jsx'
 import Button from '../../components/ui/Button.jsx'
 import { Input, Select } from '../../components/ui/Field.jsx'
 import { createItem, getLessons, updateItem } from '../../api/api.js'
-import { CHANGE_TYPES, DAY_NAMES, WEEK_TYPES } from '../../data/constants.js'
+import { CHANGE_TYPES, DAY_ACCUSATIVE, DAY_NAMES, DAY_PLURAL_DATIVE, WEEK_TYPES } from '../../data/constants.js'
 import { toISODate } from '../../utils/dates.js'
 import styles from './Admin.module.css'
 
@@ -66,7 +66,7 @@ function ChangeForm({ change, groupId, refs, onClose, onSaved }) {
 
   return (
     <Modal
-      title={change ? 'Изменить замену' : 'Новое изменение'}
+      title={change ? 'Редактировать изменение' : 'Новое изменение'}
       onClose={onClose}
       footer={
         <>
@@ -74,7 +74,7 @@ function ChangeForm({ change, groupId, refs, onClose, onSaved }) {
             Отмена
           </Button>
           <Button variant="primary" type="submit" form="change-form">
-            Сохранить
+            {change ? 'Сохранить' : 'Добавить изменение'}
           </Button>
         </>
       }
@@ -88,10 +88,14 @@ function ChangeForm({ change, groupId, refs, onClose, onSaved }) {
             placeholder="Выберите пару"
             options={lessons.map((l) => ({
               value: l.id,
-              label: `${DAY_NAMES[l.day_of_week - 1]}, ${l.pair_number} пара — ${l.subject.name} (${WEEK_TYPES[l.week_type].toLowerCase()})`,
+              label: `${DAY_NAMES[l.day_of_week - 1]}, ${l.pair_number}-я пара — ${l.subject.name} (${WEEK_TYPES[l.week_type].toLowerCase()})`,
             }))} />
         </div>
-        {lesson && <p className={styles.hint}>Эта пара проходит: {DAY_NAMES[lesson.day_of_week - 1].toLowerCase()}. Дата должна приходиться на этот день.</p>}
+        {lesson && (
+          <p className={styles.hint}>
+            Эта пара проходит по {DAY_PLURAL_DATIVE[lesson.day_of_week - 1]} — выберите дату {DAY_ACCUSATIVE[lesson.day_of_week - 1]}.
+          </p>
+        )}
         <Select label="Что изменилось" name="change_type" value={form.change_type} onChange={handleChange}
           options={Object.entries(CHANGE_TYPES).map(([value, label]) => ({ value, label }))} />
         {form.change_type === 'replacement' && (
@@ -104,7 +108,7 @@ function ChangeForm({ change, groupId, refs, onClose, onSaved }) {
         )}
         <div className={styles.full}>
           <Input label="Комментарий" name="comment" value={form.comment} onChange={handleChange}
-            placeholder="Например: преподаватель на курсах" />
+            placeholder="Например: преподаватель на курсах повышения квалификации" />
         </div>
         {error && <p className={styles.formError}>{error}</p>}
       </form>

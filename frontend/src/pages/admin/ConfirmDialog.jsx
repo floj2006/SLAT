@@ -1,16 +1,19 @@
 import Modal from '../../components/ui/Modal.jsx'
 import Button from '../../components/ui/Button.jsx'
 
-// Окно «Точно удалить?» — чтобы не удалить данные случайным кликом
-function ConfirmDialog({ text, onConfirm, onClose }) {
+/*
+  Окно «Удалить ...?» — чтобы не удалить данные случайным кликом.
+  Props: title — что удаляем («Удалить занятие?»), text — подробности, onConfirm, onClose
+*/
+function ConfirmDialog({ title = 'Удалить?', text, onConfirm, onClose }) {
   return (
     <Modal
-      title="Удалить запись?"
+      title={title}
       onClose={onClose}
       footer={
         <>
           <Button variant="ghost" onClick={onClose}>
-            Отмена
+            Не удалять
           </Button>
           <Button variant="danger" onClick={onConfirm}>
             Удалить
@@ -19,6 +22,7 @@ function ConfirmDialog({ text, onConfirm, onClose }) {
       }
     >
       <p>{text}</p>
+      <p style={{ marginTop: 8, color: 'var(--color-text-3)', font: 'var(--text-small)' }}>Это действие нельзя отменить.</p>
     </Modal>
   )
 }

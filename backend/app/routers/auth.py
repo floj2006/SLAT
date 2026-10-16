@@ -15,7 +15,7 @@ router = APIRouter(prefix="/api/auth", tags=["Авторизация"])
 def login(data: LoginIn, db: Session = Depends(get_db)):
     user = db.query(User).filter(User.username == data.username).first()
     if user is None or not verify_password(data.password, user.password_hash):
-        raise HTTPException(status_code=401, detail="Неверный логин или пароль")
+        raise HTTPException(status_code=401, detail="Неверный логин или пароль. Проверьте раскладку и Caps Lock.")
 
     user.token = new_token()
     db.commit()

@@ -15,7 +15,7 @@ function WeekGrid({ days, onSelectDay }) {
               <span>{DAY_SHORT[day.day_of_week - 1]}</span>
               <strong>{date.getDate()}</strong>
             </button>
-            {day.lessons.length === 0 && <p className={styles.free}>Нет пар</p>}
+            {day.lessons.length === 0 && <p className={styles.free}>Пар нет</p>}
             {day.lessons.map((item) => {
               const status = getLessonStatus(item, date)
               return (

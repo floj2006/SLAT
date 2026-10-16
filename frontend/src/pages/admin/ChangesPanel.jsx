@@ -40,7 +40,7 @@ function ChangesPanel({ refs }) {
   function handleSaved() {
     setEditing(null)
     loadChanges()
-    showToast('Изменение сохранено')
+    showToast('Изменение сохранено — студенты увидят его в расписании')
   }
 
   async function handleDelete() {
@@ -103,7 +103,7 @@ function ChangesPanel({ refs }) {
             ))}
             {changes.length === 0 && (
               <tr>
-                <td colSpan={7} className={styles.empty}>Изменений нет</td>
+                <td colSpan={7} className={styles.empty}>Изменений с сегодняшнего дня нет</td>
               </tr>
             )}
           </tbody>
@@ -121,7 +121,8 @@ function ChangesPanel({ refs }) {
       )}
       {deleting && (
         <ConfirmDialog
-          text={`${CHANGE_TYPES[deleting.change_type]}: ${deleting.lesson.subject.name}, ${deleting.lesson.group.name}.`}
+          title="Удалить изменение?"
+          text={`${CHANGE_TYPES[deleting.change_type]}: ${deleting.lesson.subject.name}, ${deleting.lesson.group.name}. Пара снова пойдёт по основному расписанию.`}
           onConfirm={handleDelete}
           onClose={() => setDeleting(null)}
         />

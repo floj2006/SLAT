@@ -11,6 +11,7 @@
 | Backend (FastAPI + SQLite) | `backend/` |
 | Как устроен код — разбор по файлам | [`LEARN.md`](LEARN.md) |
 | Сценарий защиты и вопросы | [`DEFENSE.md`](DEFENSE.md) |
+| Правила текстов интерфейса | [`COPY.md`](COPY.md) |
 | Как собран макет Figma | [`figma/README.md`](figma/README.md) |
 
 ## Запуск на Windows (PowerShell)
@@ -68,7 +69,7 @@ npm run dev
 
 ```powershell
 cd backend
-python -m pytest -q      # 9 автотестов API: CRUD, конфликты, 401/403, валидация
+python -m pytest -q      # 10 автотестов API: CRUD, конфликты, 401/403, валидация
 ```
 
 ## Структура

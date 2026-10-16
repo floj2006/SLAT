@@ -9,6 +9,7 @@ import Segmented from '../ui/Segmented.jsx'
 import EmptyState from '../ui/EmptyState.jsx'
 import { BELLS } from '../../data/constants.js'
 import { addDays, dayOfWeek, formatRelativeDay, fromISODate, getMonday, toISODate } from '../../utils/dates.js'
+import { capitalize } from '../../utils/text.js'
 import styles from './ScheduleScreen.module.css'
 
 // Какой день открыть сразу: сегодня (если это Пн–Сб), иначе понедельник
@@ -125,7 +126,7 @@ function DayView({ day, mode }) {
         <EmptyState
           icon={Coffee}
           title="Свободный день"
-          text="В этот день занятий нет. Можно выдохнуть или посмотреть другой день."
+          text="В этот день пар нет. Отдохните или загляните в другой день."
         />
       ) : (
         <div className={styles.list}>
@@ -136,10 +137,6 @@ function DayView({ day, mode }) {
       )}
     </section>
   )
-}
-
-function capitalize(text) {
-  return text.charAt(0).toUpperCase() + text.slice(1)
 }
 
 export default ScheduleScreen

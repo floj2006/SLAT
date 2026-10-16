@@ -13,11 +13,17 @@ async function request(path, options = {}) {
     headers.Authorization = `Bearer ${token}`
   }
 
-  const response = await fetch(path, {
-    method: options.method || 'GET',
-    headers,
-    body: options.body ? JSON.stringify(options.body) : undefined,
-  })
+  let response
+  try {
+    response = await fetch(path, {
+      method: options.method || 'GET',
+      headers,
+      body: options.body ? JSON.stringify(options.body) : undefined,
+    })
+  } catch {
+    // fetch падает, когда до сервера вообще не достучаться
+    throw new Error('Нет связи с сервером. Проверьте интернет и попробуйте ещё раз.')
+  }
 
   // 204 No Content — ответа нет (так отвечает DELETE)
   if (response.status === 204) {
@@ -35,11 +41,11 @@ async function request(path, options = {}) {
   return data
 }
 
-// FastAPI возвращает ошибки в поле detail: строкой или списком
+// FastAPI возвращает ошибки в поле detail: строкой (наши сообщения) или списком (проверка полей)
 function readError(data, status) {
-  if (!data || !data.detail) return `Ошибка сервера (${status})`
-  if (typeof data.detail === 'string') return data.detail
-  return 'Проверьте правильность заполнения полей'
+  if (data && typeof data.detail === 'string') return data.detail
+  if (status === 422) return 'Некоторые поля заполнены неверно. Проверьте форму и попробуйте ещё раз.'
+  return `Что-то пошло не так на сервере (код ${status}). Попробуйте ещё раз через минуту.`
 }
 
 // Собирает строку параметров: { group_id: 1 } → '?group_id=1'

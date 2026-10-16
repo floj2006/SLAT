@@ -13,6 +13,7 @@ from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 
 from ..auth import require_admin
+from ..texts import in_use_message
 from ..database import get_db
 from ..models import Lesson, Teacher
 from ..schedule_service import build_week
@@ -68,9 +69,6 @@ def update_teacher(teacher_id: int, data: TeacherIn, db: Session = Depends(get_d
 def delete_teacher(teacher_id: int, db: Session = Depends(get_db)):
     teacher = find_teacher(db, teacher_id)
     if teacher.lessons:
-        raise HTTPException(
-            status_code=409,
-            detail=f"Нельзя удалить: преподаватель ведёт {len(teacher.lessons)} занятий",
-        )
+        raise HTTPException(status_code=409, detail=in_use_message("преподаватель", len(teacher.lessons)))
     db.delete(teacher)
     db.commit()

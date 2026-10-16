@@ -83,7 +83,7 @@ function LessonForm({ lesson, groupId, refs, onClose, onSaved, onDelete }) {
             Отмена
           </Button>
           <Button variant="primary" type="submit" form="lesson-form" disabled={saving}>
-            {saving ? 'Сохраняем…' : 'Сохранить'}
+            {saving ? 'Сохраняем…' : lesson ? 'Сохранить' : 'Добавить занятие'}
           </Button>
         </>
       }

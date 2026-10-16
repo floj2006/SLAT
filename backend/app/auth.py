@@ -46,17 +46,17 @@ def get_current_user(
 ) -> User:
     """Находит пользователя по токену из заголовка Authorization."""
     if not authorization.startswith("Bearer "):
-        raise HTTPException(status_code=401, detail="Нужно войти в систему")
+        raise HTTPException(status_code=401, detail="Войдите в учётную запись, чтобы изменять расписание.")
 
     token = authorization.removeprefix("Bearer ")
     user = db.query(User).filter(User.token == token).first()
     if user is None:
-        raise HTTPException(status_code=401, detail="Сессия устарела, войдите снова")
+        raise HTTPException(status_code=401, detail="Сессия истекла. Войдите снова.")
     return user
 
 
 def require_admin(user: User = Depends(get_current_user)) -> User:
     """Пропускает дальше только пользователя с ролью admin."""
     if user.role != "admin":
-        raise HTTPException(status_code=403, detail="Недостаточно прав")
+        raise HTTPException(status_code=403, detail="Недостаточно прав: изменять расписание может только администратор.")
     return user

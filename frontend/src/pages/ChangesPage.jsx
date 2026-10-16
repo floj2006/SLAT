@@ -6,7 +6,7 @@ import Segmented from '../components/ui/Segmented.jsx'
 import Badge from '../components/ui/Badge.jsx'
 import EmptyState from '../components/ui/EmptyState.jsx'
 import ChangeRow from '../components/schedule/ChangeRow.jsx'
-import { CHANGE_TYPES } from '../data/constants.js'
+import { CHANGE_TYPES_PLURAL } from '../data/constants.js'
 import { formatRelativeDay, fromISODate, toISODate } from '../utils/dates.js'
 import styles from './Page.module.css'
 import local from './ChangesPage.module.css'
@@ -47,7 +47,7 @@ function ChangesPage() {
       <div className={styles.header}>
         <div className={styles.heading}>
           <h1 className={styles.title}>Изменения</h1>
-          <p className={styles.subtitle}>Замены, переносы и отмены на ближайшие дни</p>
+          <p className={styles.subtitle}>Замены преподавателей, другие аудитории и отмены — начиная с сегодня</p>
         </div>
         <div className={local.select}>
           <Select
@@ -61,7 +61,7 @@ function ChangesPage() {
       </div>
 
       <div className={local.stats}>
-        {Object.entries(CHANGE_TYPES).map(([key, label]) => (
+        {Object.entries(CHANGE_TYPES_PLURAL).map(([key, label]) => (
           <div key={key} className={local.stat}>
             <span className={local.statLabel}>
               <span className={`${local.dot} ${local[key]}`} />
@@ -78,13 +78,13 @@ function ChangesPage() {
         options={[
           { value: 'all', label: 'Все' },
           { value: 'replacement', label: 'Замены' },
-          { value: 'room', label: 'Аудитории' },
+          { value: 'room', label: 'Другая аудитория' },
           { value: 'cancelled', label: 'Отмены' },
         ]}
       />
 
       {changes && visible.length === 0 && (
-        <EmptyState icon={CalendarCheck} title="Изменений нет" text="Всё идёт по основному расписанию." />
+        <EmptyState icon={CalendarCheck} title="Изменений нет" text="Все пары идут по основному расписанию." />
       )}
 
       {Object.entries(byDate).map(([date, items]) => (

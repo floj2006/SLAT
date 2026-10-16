@@ -102,14 +102,14 @@ function LessonsPanel({ refs }) {
             ))}
             {visible.length === 0 && (
               <tr>
-                <td colSpan={8} className={styles.empty}>Занятий нет</td>
+                <td colSpan={8} className={styles.empty}>В этот день у группы нет занятий</td>
               </tr>
             )}
           </tbody>
         </table>
       </div>
       <p className={styles.footnote}>
-        Занятий у группы {groupName}: {lessons.length} · изменения сразу сохраняются в базе SQLite
+        Всего занятий у группы {groupName}: {lessons.length}. Изменения сохраняются сразу.
       </p>
 
       {editing && (
@@ -124,7 +124,8 @@ function LessonsPanel({ refs }) {
       )}
       {deleting && (
         <ConfirmDialog
-          text={`${deleting.subject.name}, ${DAY_NAMES[deleting.day_of_week - 1].toLowerCase()}, ${deleting.pair_number} пара. Изменения этого занятия тоже удалятся.`}
+          title="Удалить занятие?"
+          text={`${deleting.subject.name}, ${DAY_NAMES[deleting.day_of_week - 1].toLowerCase()}, ${deleting.pair_number}-я пара. Вместе с ним удалятся все его замены и отмены.`}
           onConfirm={handleDelete}
           onClose={() => setDeleting(null)}
         />

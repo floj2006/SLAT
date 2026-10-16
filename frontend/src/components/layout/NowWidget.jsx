@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { BELLS } from '../../data/constants.js'
 import { timeToMinutes } from '../../utils/dates.js'
+import { pairLabel } from '../../utils/text.js'
 import styles from './NowWidget.module.css'
 
 /*
@@ -9,19 +10,19 @@ import styles from './NowWidget.module.css'
 */
 function getStatus(now) {
   const minutes = now.getHours() * 60 + now.getMinutes()
-  const isSunday = now.getDay() === 0
+  if (now.getDay() === 0) return { label: 'Сегодня выходной', time: 'пары начнутся в понедельник', progress: 0 }
 
   for (const [pair, bell] of Object.entries(BELLS)) {
     const start = timeToMinutes(bell.start)
     const end = timeToMinutes(bell.end)
-    if (!isSunday && minutes >= start && minutes < end) {
-      return { label: `Идёт ${pair} пара`, time: `${bell.start} – ${bell.end}`, progress: (minutes - start) / (end - start) }
+    if (minutes >= start && minutes < end) {
+      return { label: `Идёт ${pairLabel(pair)}`, time: `${bell.start} – ${bell.end}`, progress: (minutes - start) / (end - start) }
     }
-    if (!isSunday && minutes < start) {
-      return { label: `Следующая — ${pair} пара`, time: `начало в ${bell.start}`, progress: 0 }
+    if (minutes < start) {
+      return { label: `Скоро ${pairLabel(pair)}`, time: `начало в ${bell.start}`, progress: 0 }
     }
   }
-  return { label: 'Пары закончились', time: 'до завтра', progress: 1 }
+  return { label: 'Пары закончились', time: 'на сегодня всё', progress: 1 }
 }
 
 function NowWidget() {
