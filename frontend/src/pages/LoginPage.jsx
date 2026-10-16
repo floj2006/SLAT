@@ -54,7 +54,13 @@ function LoginPage() {
           {loading ? 'Проверяем…' : 'Войти'}
         </Button>
         <p className={styles.hint}>
-          Демо: <code>admin / admin123</code> — администратор, <code>student / student123</code> — только просмотр
+          {/* import.meta.env.DEV — true только при локальном запуске (npm run dev) */}
+          {import.meta.env.DEV && (
+            <>
+              Демо: <code>admin / admin123</code> — администратор,{' '}
+            </>
+          )}
+          <code>student / student123</code> — вход только для просмотра
         </p>
       </form>
     </div>
