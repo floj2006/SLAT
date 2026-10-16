@@ -59,7 +59,7 @@ function HomePage() {
           за пару секунд<span className={styles.dot}>.</span>
         </h1>
         <p className={styles.lead}>
-          Найдите свою группу — и сразу увидите пары на сегодня, замены и отмены. Без Excel-таблиц.
+          Куда идти, к какой паре и не отменили ли её — всё здесь.
         </p>
         <form className={styles.search} onSubmit={handleSubmit}>
           <Input
